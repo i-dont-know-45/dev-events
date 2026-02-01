@@ -15,13 +15,6 @@ declare global {
 // Get MongoDB URI from environment variables
 const MONGODB_URI: string | undefined = process.env.MONGODB_URI;
 
-// Validate that MONGODB_URI is defined
-if (!MONGODB_URI) {
-  throw new Error(
-    'Please define the MONGODB_URI environment variable inside .env'
-  );
-}
-
 /**
  * Global is used here to maintain a cached connection across hot reloads
  * in development. This prevents connections growing exponentially
@@ -51,6 +44,13 @@ async function connectDB(): Promise<typeof mongoose> {
   // Return existing connection if available
   if (cached.conn) {
     return cached.conn;
+  }
+
+  // Validate that MONGODB_URI is defined before attempting connection
+  if (!MONGODB_URI) {
+    throw new Error(
+      'Please define the MONGODB_URI environment variable inside .env'
+    );
   }
 
   // Create new connection promise if none exists
