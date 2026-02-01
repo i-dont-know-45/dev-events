@@ -170,14 +170,20 @@ function generateSlug(title: string): string {
  * Accepts various date formats and converts to standard ISO format
  */
 function normalizeDateToISO(dateString: string): string {
-  const date = new Date(dateString);
-
-  if (isNaN(date.getTime())) {
-    throw new Error("Invalid date format. Please provide a valid date.");
+  // Try to parse ISO format first (YYYY-MM-DD)
+  const isoMatch = dateString.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    const [, year, month, day] = isoMatch;
+    // Validate the date components
+    const date = new Date(Date.UTC(+year, +month - 1, +day));
+    if (date.getUTCFullYear() === +year && 
+        date.getUTCMonth() === +month - 1 && 
+        date.getUTCDate() === +day) {
+      return dateString;
+    }
   }
-
-  // Return date in ISO format (YYYY-MM-DD)
-  return date.toISOString().split("T")[0];
+  
+  throw new Error("Invalid date format. Please provide date in YYYY-MM-DD format.");
 }
 
 /**
