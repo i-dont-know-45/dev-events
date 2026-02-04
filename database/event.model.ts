@@ -112,7 +112,7 @@ const EventSchema = new Schema<IEvent>(
 );
 
 // Create unique index on slug for faster queries
-EventSchema.index({ slug: 1 }, { unique: true });
+// EventSchema.index({ slug: 1 }, { unique: true });
 
 /**
  * Pre-save hook to generate slug from title and normalize date/time
@@ -120,7 +120,7 @@ EventSchema.index({ slug: 1 }, { unique: true });
  * - Date is validated and normalized to ISO format
  * - Time is normalized to consistent format (HH:MM)
  */
-EventSchema.pre("save", async function (next) {
+EventSchema.pre("save", async function () {
   const event = this as IEvent;
 
   // Generate slug only if title is new or modified
@@ -148,7 +148,7 @@ EventSchema.pre("save", async function (next) {
     event.time = normalizeTime(event.time);
   }
 
-  next();
+  // next();
 });
 
 /**
