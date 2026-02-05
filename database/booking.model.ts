@@ -45,45 +45,30 @@ BookingSchema.index({ eventId: 1, email: 1 }, { unique: true });
 /**
  * Pre-save hook to validate that the referenced Event exists
  * Prevents orphaned bookings by ensuring eventId points to a valid event
+ * Note: In Mongoose 7+, throw errors instead of using next() callback
  */
-BookingSchema.pre('save', async function (next) {
+BookingSchema.pre('save', async function () {
   const booking = this as IBooking;
 
   // Only validate eventId if it's new or modified
   if (booking.isModified('eventId')) {
-    try {
-      // Check if Event model exists in mongoose.models
-      const EventModel = mongoose.models.Event;
+    // Check if Event model exists in mongoose.models
+    const EventModel = mongoose.models.Event;
 
-      if (!EventModel) {
-        return next(
-          new Error(
-            'Event model not found. Please ensure Event model is registered.'
-          )
-        );
-      }
-
-      // Verify that the event exists in the database
-      const eventExists = await EventModel.findById(booking.eventId);
-
-      if (!eventExists) {
-        return next(
-          new Error(
-            `Event with ID ${booking.eventId} does not exist. Cannot create booking for non-existent event.`
-          )
-        );
-      }
-
-      next();
-    } catch (error) {
-      if (error instanceof Error) {
-        next(error);
-      } else {
-        next(new Error('An error occurred while validating the event'));
-      }
+    if (!EventModel) {
+      throw new Error(
+        'Event model not found. Please ensure Event model is registered.'
+      );
     }
-  } else {
-    next();
+
+    // Verify that the event exists in the database
+    const eventExists = await EventModel.findById(booking.eventId);
+
+    if (!eventExists) {
+      throw new Error(
+        `Event with ID ${booking.eventId} does not exist. Cannot create booking for non-existent event.`
+      );
+    }
   }
 });
 
