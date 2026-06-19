@@ -31,14 +31,11 @@ if (!global.mongoose) {
 }
 
 /**
- * Establishes a connection to MongoDB using Mongoose
- * 
- * This function implements connection caching to:
- * - Reuse existing connections in serverless environments
- * - Prevent connection exhaustion during development hot reloads
- * - Optimize performance by avoiding redundant connection attempts
- * 
- * @returns Promise that resolves to the Mongoose instance
+ * Establishes and returns a cached Mongoose connection to MongoDB.
+ *
+ * Caches the connection and the in-flight connection promise so subsequent calls reuse the same connection (including across development hot reloads); clears cache on failure to allow retry.
+ *
+ * @returns The connected Mongoose instance
  */
 async function connectDB(): Promise<typeof mongoose> {
   // Return existing connection if available

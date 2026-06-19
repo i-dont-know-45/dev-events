@@ -152,8 +152,10 @@ EventSchema.pre("save", async function (next) {
 });
 
 /**
- * Generate URL-friendly slug from title
- * Converts to lowercase, removes special characters, and replaces spaces with hyphens
+ * Create a URL-friendly slug from a title.
+ *
+ * @param title - The input string to convert into a slug
+ * @returns The slugified string: lowercase, words separated by hyphens with no leading or trailing hyphens
  */
 function generateSlug(title: string): string {
   return title
@@ -166,8 +168,11 @@ function generateSlug(title: string): string {
 }
 
 /**
- * Normalize date to ISO 8601 format (YYYY-MM-DD)
- * Accepts various date formats and converts to standard ISO format
+ * Convert a date string to ISO 8601 date format (YYYY-MM-DD).
+ *
+ * @param dateString - An input date value parseable by the JavaScript Date constructor
+ * @returns The date formatted as `YYYY-MM-DD`
+ * @throws If `dateString` cannot be parsed as a valid date
  */
 function normalizeDateToISO(dateString: string): string {
   // Try to parse ISO format first (YYYY-MM-DD)
@@ -187,8 +192,11 @@ function normalizeDateToISO(dateString: string): string {
 }
 
 /**
- * Normalize time to 24-hour format (HH:MM)
- * Accepts 12-hour or 24-hour format and converts to HH:MM
+ * Convert a time string into 24-hour `HH:MM` format.
+ *
+ * @param timeString - Time in either 24-hour `HH:MM` or 12-hour `H:MM AM/PM` (case-insensitive) format
+ * @returns The time normalized to `HH:MM` (24-hour) format
+ * @throws Error if `timeString` is not a valid 24-hour `HH:MM` or 12-hour `H:MM AM/PM` format
  */
 function normalizeTime(timeString: string): string {
   const time = timeString.trim();
